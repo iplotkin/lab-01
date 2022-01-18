@@ -1,7 +1,7 @@
 ---
-title: "Untitled"
-author: "STAT 108"
-date: "1/11/2022"
+title: "Lab 01: Review R + inference"
+author: "Isaac Plotkin"
+date: "1/18/2022"
 output:
   pdf_document: default
   html_document: default
