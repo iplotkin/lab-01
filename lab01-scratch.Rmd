@@ -3,8 +3,8 @@ title: "Lab 01: Review R + inference"
 author: "Isaac Plotkin"
 date: "1/18/2022"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -47,6 +47,7 @@ View(trails)
 1. Now that we've had a quick view of the dataset, let's get more details about its structure. Sometimes viewing a summary of the data structure is more useful than viewing the raw data, especially if the dataset has a large number of observations and/or rows. Run the code below to use the `glimpse` function to see a summary of the `trails` dataset.
 
     How many observations are in the `trails` dataset? How many variables?
+    <br> There are 739 observations and 12 variables.
 
   
 ```{r eval = F}
@@ -62,26 +63,28 @@ glimpse(trails)
 
 ```{r eval=FALSE}
 ggplot(data = trails, aes(x = status)) + 
-  __________ + 
-  labs(x = "_________", 
-       y = "_________", 
-       title = "__________")
+  geom_bar()  + 
+  labs(x = "Status", 
+       y = "Number of Trails", 
+       title = "Status of trails")
 ```
 
 
 
 ```{r eval = FALSE}
 trails %>%
-  count(_____) %>%
+  count(status) %>%
   mutate(proportion = n / sum(n))
 ```
 
 3. Since we want to analyze characteristics for trails in the Bay Area, we will just use data from currently existing trails for the remainder of the analysis. Complete the code below to use the `filter` function to create a subset consisting only of trails that currently exist and have a value reported for `length`. Assign the subset the name `current_trails`. (*Hint: There should be 493 observations in current_trails.*)
 
 ```{r eval = F}
-__________ <- trails %>%
-  filter(status == "______", !is.na(______))
-````
+current_trails <- trails %>%
+  filter(status == "Existing", !is.na(length))
+current_trails
+```
+
 
 
 *This is a good place to knit, commit, and push changes to your remote lab-01 repo on GitHub. Be sure to write an informative commit message (e.g. "Completed exercises 1 - 3"), and push every file to GitHub by clicking the checkbox next to each file in the Git pane. After you push the changes, the Git pane in RStudio should be empty."*
