@@ -97,10 +97,16 @@ current_trails
 
 ```{r eval = F}
 ggplot(data = current_trails) +
-  geom_histogram(mapping = aes(x = _____), binwidth = 0.5)
+  geom_histogram(mapping = aes(x = length), binwidth = 0.5) +
+labs(x = "Length", 
+       y = "Count", 
+       title = "Length Histogram")
 
-ggplot(data = current_trails, mapping = aes(x = as.factor(class), y = _____)) +
-  geom_boxplot()
+ggplot(data = current_trails, mapping = aes(x = as.factor(class), y = length)) +
+  geom_boxplot() +
+  labs(x = "Class", 
+       y = "Length", 
+       title = "Length and Class Boxplot")
 ```
 
 See [Section 7.3.1 "Visualizing Distributions"](https://r4ds.had.co.nz/exploratory-data-analysis.html#introduction-3) or the [ggplot2 reference page](https://ggplot2.tidyverse.org/reference/index.html) for details and example code.
@@ -109,41 +115,97 @@ See [Section 7.3.1 "Visualizing Distributions"](https://r4ds.had.co.nz/explorato
 
 ```{r eval = FALSE}
 current_trails %>%
-  summarise(min = __________, 
-            q1 = __________, 
-            median = __________, 
-            q3 = __________, 
-            max = __________, 
-            iqr = __________, 
-            mean = __________, 
-            std_dev = __________
+  summarise(min = min(length), 
+            q1 = quantile(length, 0.25), 
+            median = median(length), 
+            q3 = quantile(length, 0.75), 
+            max = max(length), 
+            iqr = IQR(length), 
+            mean = mean(length), 
+            std_dev = sd(length)
             )
 ```
 
 6. Describe the distribution of `length`. Your description should include comments about the shape, center, spread, and any potential outliers. Use the graph from Exercise 4 and relevant summary statistics from Exercise 5 in your description.
 
+There are both small and large outliers in the distribution of length. The histogram is right skewed with most of the data points centered around the mean. There are quite a few points that are much larger than the mean and 3rd quantile. Most of the longer trails are class 1 trails.
+
 7. We want to limit the analysis to trails that are more likely intended for day hikes, rather than multi-day hikes and camping. Therefore, let's remove the extreme outliers from the data for this analysis and only consider those trails that are 5 miles or shorter. 
 
     Filter the dataset to remove the extreme outliers. **Be sure to save the updated dataset, so you can use it for the remainder of the lab.** 
+    
+```{r eval = F}
+day_trails <- trails %>%
+  filter(length <= 5)
+day_trails
+```
     
 *This is a good place to knit, commit, and push changes to your remote lab-01 repo on GitHub. Be sure to write informative commit message (e.g. "Completed exercises 4 - 7"), and push every file to GitHub by clicking the checkbox next to each file in the Git pane. After you push the changes, the Git pane in RStudio should be empty."*
 
 8. Consider the distribution of `class`. 
     - What are the values of `class` in the dataset? Show the code and output to support your answer. 
+    
+    1 2 3 and NA (which could mean 4). There are no trails in class 4.
     - What do you think is the most likely reason for the missing observations of `class`? In other words, what does a missing value of `class` indicate? 
+    
+    Maybe there are not any trails developed far enough to be considered in class 4. Might be difficult to achieve a class 4 trail.
+    
+
+```{r eval=FALSE}
+print(unique(trails$class))
+ggplot(data = trails, aes(x = class)) + 
+  geom_bar()  + 
+  labs(x = "Class", 
+       y = "Number of Trails", 
+       title = "Classes of trails")
+```
 
 9. Complete the code below to impute (i.e. fill in) the missing values of `class` with the appropriate value. After that, eliminate all the observations from class = 3, since we are not going to use the. Then, display the distribution of `class` to check that the missing values were correctly imputed.
 
 ```{r eval=FALSE}
-__________ <- __________ %>% filter(class !=3) %>% 
-  mutate(class = if_else(is.na(class),______,class)) 
+updated_trails <- trails %>% filter(class !=3) %>% 
+  mutate(class = if_else(is.na(class),3,class)) 
+
+updated_trails
 ```
 
 10. Now that we've completed the univariate EDA (i.e. examining one variable at a time), let's examine the relationship between the length of the trail and its class variable. Make a graph to visualize the relationship between `length` and `class` and calculate the appropriate summary statistics. Include informative axis labels and title on your graph.
 
+```{r eval=FALSE}
+ggplot(data = trails, mapping = aes(x = as.factor(class), y = length)) +
+ geom_boxplot() +
+ labs(title = "Class vs. Length",
+      x = "Class",
+      y = "Length")
+
+print(current_trails %>%
+  summarise(min = min(class), 
+            median = median(class), 
+            max = max(class),  
+            mean = mean(class), 
+            std_dev = sd(class)
+            ))
+
+print(current_trails %>%
+  summarise(min = min(length), 
+            q1 = quantile(length, 0.25), 
+            median = median(length), 
+            q3 = quantile(length, 0.75), 
+            max = max(length), 
+            iqr = IQR(length), 
+            mean = mean(length), 
+            std_dev = sd(length)
+            ))
+
+```
+
 11. Describe the relationship between `length` and `class`. In other words, describe how the distribution of `length` compares between trails that have different classes (1 = shared use bicycle and pedestrian path, 2 = bike lane, and 3 = bike route). Include information from the graph and summary statistics from the previous exercise in your response.
 
+Trails of class 1 (shared use bicycle and pedestrian path) tend to have the longest trails of all classes; however, trails from class 3 (bike route) tend to have the longest trails on average. Most of the trails lie within class one or two. 
+
 *This is a good place to knit, commit, and push changes to your remote lab-01 repo on GitHub. Be sure to write informative commit message (e.g. "Completed exercises 8 - 11"), and push every file to GitHub by clicking the checkbox next to each file in the Git pane. After you push the changes, the Git pane in RStudio should be empty."*
+
+
 
 
 ## Statistical Inference
